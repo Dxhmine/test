@@ -9,6 +9,106 @@
   <link rel="stylesheet" href="https://fastlist-css.pages.dev/css.css">
   <style>
     /* css */
+    /* 搜索功能样式 */
+    .search-container {
+      position: relative;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: var(--spacing-md);
+      color: var(--outline);
+      z-index: 1;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: var(--spacing-md) var(--spacing-lg) var(--spacing-md) calc(var(--spacing-md) * 3);
+      background-color: var(--surface-variant);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      color: var(--on-surface);
+      transition: var(--transition);
+    }
+    
+    .search-input:focus {
+      outline: none;
+      background-color: var(--surface);
+      box-shadow: 0 0 0 2px var(--primary);
+    }
+    
+    .search-input::placeholder {
+      color: var(--outline);
+    }
+    
+    .clear-search-btn {
+      position: absolute;
+      right: var(--spacing-sm);
+      background: none;
+      border: none;
+      color: var(--outline);
+      cursor: pointer;
+      padding: var(--spacing-xs);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    
+    .clear-search-btn:hover {
+      background-color: var(--outline-variant);
+      color: var(--on-surface);
+    }
+    
+    .search-results-count {
+      font-size: 14px;
+      color: var(--outline);
+      margin-top: var(--spacing-xs);
+      text-align: right;
+    }
+    
+    /* 搜索结果中匹配的文本高亮 */
+    .highlight {
+      background-color: rgba(255, 230, 0, 0.3);
+      font-weight: bold;
+      color: var(--on-background);
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+    
+    /* 无搜索结果提示 */
+    .no-results {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--outline);
+    }
+    
+    .no-results i {
+      font-size: 32px;
+      margin-bottom: var(--spacing-md);
+      display: block;
+    }
+    
+    /* 搜索结果中的分类标题 */
+    .search-result-category {
+      background-color: var(--primary-container);
+      color: var(--on-primary-container);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      margin-top: var(--spacing-lg);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
     :root {
       --primary: #0067C0;
       --on-primary: #FFFFFF;
@@ -655,6 +755,67 @@
       gap: var(--spacing-lg);
     }
     
+    .release-category {
+      background: var(--surface-variant);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--outline-variant);
+      margin-bottom: var(--spacing-lg);
+      overflow: hidden;
+    }
+    
+    .category-header {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      padding: var(--spacing-md) var(--spacing-lg);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition);
+      font-weight: 600;
+    }
+    
+    .category-header:hover {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+    
+    .category-content {
+      padding: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease;
+    }
+    
+    .category-content.expanded {
+      padding: var(--spacing-md);
+      max-height: 5000px;
+      transition: max-height 0.8s ease-in, padding 0.3s ease;
+    }
+    
+    .category-count {
+      background: var(--surface);
+      color: var(--on-surface);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .default-category {
+      background: var(--surface);
+    }
+    
+    .default-category .category-header {
+      background: var(--secondary-container);
+      color: var(--on-secondary-container);
+    }
+    
+    .default-category .category-header:hover {
+      background: var(--secondary);
+      color: var(--on-secondary);
+    }
+    
     .discussion-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -765,8 +926,27 @@
 
     <div class="card">
       <h2 class="section-title"><i class="fas fa-box-open"></i> 文件发布</h2>
-      <div class="release-grid" id="releases">
-        <div class="loading-text"><i class="fas fa-spinner"></i> 加载发布文件中...</div>
+      <!-- 搜索框 -->
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="search-input" 
+                 placeholder="搜索文件名或分类..." 
+                 class="search-input">
+          <button id="clear-search" class="clear-search-btn" style="display:none;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="search-results-count" class="search-results-count"></div>
+      </div>
+      <!-- 原始内容显示区域 -->
+      <div id="original-content">
+        <div class="release-grid" id="releases">
+          <div class="loading-text"><i class="fas fa-spinner"></i> 加载发布文件中...</div>
+        </div>
+      </div>
+      <!-- 搜索结果显示区域 -->
+      <div id="search-results" class="release-grid" style="display:none;">
       </div>
     </div>
 
@@ -883,45 +1063,24 @@
         const releases = await response.json();
         const container = document.getElementById('releases');
         
-        container.innerHTML = releases.map(release => `
-          <div class="release">
-            <div class="release-header">
-              <h3><i class="fas fa-tag"></i> ${escapeHtml(release.name)}</h3>
-              <div class="release-meta">
-                <span><i class="fas fa-code-branch"></i> 版本：${escapeHtml(release.tag_name)}</span>
-                <span><i class="fas fa-calendar-alt"></i> 发布时间：${new Date(release.published_at).toLocaleDateString()}</span>
-              </div>
-            </div>
-            <ul class="assets" style="display:none;">
-              ${release.assets.map(asset => `
-                <li class="download-item">
-                  <div class="file-info">
-                    <span class="file-name"><i class="fas fa-file"></i> ${escapeHtml(asset.name)}</span>
-                    <span class="file-size"><i class="fas fa-database"></i> ${formatFileSize(asset.size)}</span>
-                  </div>
-                  <div class="download-options">
-                    <a href="${asset.browser_download_url}" class="download-link">
-                      <i class="fas fa-download"></i> 普通下载
-                    </a>
-                    <a href="${generateProxyUrl(asset.browser_download_url)}" 
-                       class="download-link accelerated">
-                      <i class="fas fa-bolt"></i> 高速下载
-                    </a>
-                  </div>
-                </li>
-              `).join('')}
-            </ul>
-            <button class="submit-button toggle-assets">
-              <i class="fas fa-layer-group"></i> 显示资源
-            </button>
-          </div>
-        `).join('');
+        // 保存原始数据用于搜索
+        allReleasesData = releases;
+        
+        // 对releases按标签进行分类
+        const categorizedReleases = categorizeReleasesByTags(releases);
+        
+        // 保存分类数据用于搜索
+        categorizedReleasesData = categorizedReleases;
+        
+        // 生成分类HTML
+        container.innerHTML = generateCategoryHTML(categorizedReleases);
 
         // 更新统计信息
         document.getElementById('release-count').textContent = releases.length;
         const totalFiles = releases.reduce((acc, release) => acc + release.assets.length, 0);
         document.getElementById('file-count').textContent = totalFiles;
 
+        // 添加切换资源显示的事件监听
         document.querySelectorAll('.toggle-assets').forEach(button => {
           button.addEventListener('click', function() {
             const assetsList = this.previousElementSibling;
@@ -931,9 +1090,159 @@
               '<i class="fas fa-layer-group"></i> 隐藏资源';
           });
         });
+        
+        // 添加分类折叠展开的事件监听
+        document.querySelectorAll('.category-header').forEach(header => {
+          header.addEventListener('click', function() {
+            const content = this.nextElementSibling;
+            content.classList.toggle('expanded');
+            const icon = this.querySelector('.category-icon');
+            icon.className = content.classList.contains('expanded') ? 
+              'fas fa-chevron-down category-icon' : 
+              'fas fa-chevron-right category-icon';
+          });
+        });
+        
+        // 默认展开所有分类
+        setTimeout(() => {
+          document.querySelectorAll('.category-header').forEach(header => {
+            header.click();
+          });
+        }, 100);
+        
+        // 初始化搜索功能
+        initSearch();
       } catch (error) {
         showErrorNotification(`文件加载失败: ${error.message}`);
       }
+    }
+    
+    // 根据标签对releases进行分类
+    function categorizeReleasesByTags(releases) {
+      const categories = {};
+      const defaultCategory = '其他';
+      
+      releases.forEach(release => {
+        // 检测标签（从tag_name、name或body中提取）
+        const tags = extractTags(release);
+        
+        if (tags.length > 0) {
+          // 有标签的release放入对应的分类
+          tags.forEach(tag => {
+            if (!categories[tag]) {
+              categories[tag] = [];
+            }
+            categories[tag].push(release);
+          });
+        } else {
+          // 无标签的release放入默认分类
+          if (!categories[defaultCategory]) {
+            categories[defaultCategory] = [];
+          }
+          categories[defaultCategory].push(release);
+        }
+      });
+      
+      return categories;
+    }
+    
+    // 从release中提取标签
+    function extractTags(release) {
+      const tags = [];
+      const tagPattern = /#([a-zA-Z0-9_\u4e00-\u9fa5]+)/g;
+      
+      // 从多个字段中提取标签
+      const fieldsToCheck = [
+        release.tag_name || '',
+        release.name || '',
+        release.body || ''
+      ];
+      
+      fieldsToCheck.forEach(field => {
+        const matches = field.match(tagPattern);
+        if (matches) {
+          matches.forEach(match => {
+            const tag = match.substring(1).toLowerCase();
+            if (!tags.includes(tag)) {
+              tags.push(tag);
+            }
+          });
+        }
+      });
+      
+      return tags;
+    }
+    
+    // 生成分类HTML
+    function generateCategoryHTML(categories) {
+      const defaultCategory = '其他';
+      let html = '';
+      
+      // 先处理非默认分类
+      Object.keys(categories).forEach(categoryName => {
+        if (categoryName !== defaultCategory) {
+          html += generateCategoryHTMLSection(categoryName, categories[categoryName], false);
+        }
+      });
+      
+      // 最后处理默认分类（如果存在）
+      if (categories[defaultCategory] && categories[defaultCategory].length > 0) {
+        html += generateCategoryHTMLSection(defaultCategory, categories[defaultCategory], true);
+      }
+      
+      return html || '<div class="empty-message">暂无发布内容</div>';
+    }
+    
+    // 生成单个分类的HTML
+    function generateCategoryHTMLSection(categoryName, releases, isDefault) {
+      const categoryClass = isDefault ? 'release-category default-category' : 'release-category';
+      
+      return `
+        <div class="${categoryClass}">
+          <div class="category-header">
+            <span>
+              <i class="fas fa-chevron-right category-icon"></i>
+              ${escapeHtml(categoryName)}
+              <span class="category-count">${releases.length}</span>
+            </span>
+          </div>
+          <div class="category-content">
+            ${releases.map(release => `
+              <div class="release">
+                <div class="release-header">
+                  <h3><i class="fas fa-tag"></i> ${escapeHtml(release.name)}</h3>
+                  <div class="release-meta">
+                    <span><i class="fas fa-tags"></i> 分类：${escapeHtml(release.tag_name)}</span>
+                    <span><i class="fas fa-calendar-alt"></i> 发布时间：${new Date(release.published_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                <ul class="assets" style="display:none;">
+                  ${release.assets.map(asset => `
+                    <li class="download-item">
+                      <div class="file-info">
+                        <span class="file-name"><i class="fas fa-file"></i> ${escapeHtml(asset.name)}</span>
+                        <span class="file-size"><i class="fas fa-database"></i> ${formatFileSize(asset.size)}</span>
+                      </div>
+                      <div class="download-options">
+                        <a href="${asset.browser_download_url}" class="download-link">
+                          <i class="fas fa-download"></i> 普通下载
+                        </a>
+                        <a href="${generateProxyUrl(asset.browser_download_url)}" 
+                           class="download-link accelerated">
+                          <i class="fas fa-bolt"></i> 高速下载
+                        </a>
+                      </div>
+                    </li>
+                  `).join('')}
+                </ul>
+                <button class="submit-button toggle-assets">
+                  <i class="fas fa-layer-group"></i> 显示资源
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
     }
 
     // 获取并显示讨论区
@@ -1053,6 +1362,186 @@
 
     function generateProxyUrl(url) {
       return `https://ghproxy.net/${encodeURI(url)}`;
+    }
+
+    // 搜索功能
+    let allReleasesData = []; // 存储所有releases数据
+    let categorizedReleasesData = {}; // 存储分类后的releases数据
+    
+    function initSearch() {
+      const searchInput = document.getElementById('search-input');
+      const clearSearchBtn = document.getElementById('clear-search');
+      const originalContent = document.getElementById('original-content');
+      const searchResults = document.getElementById('search-results');
+      const resultsCount = document.getElementById('search-results-count');
+      
+      // 监听搜索输入
+      searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.trim().toLowerCase();
+        
+        // 显示/隐藏清除按钮
+        clearSearchBtn.style.display = searchTerm ? 'flex' : 'none';
+        
+        // 执行搜索
+        if (searchTerm) {
+          performSearch(searchTerm);
+        } else {
+          // 清空搜索时显示原始内容
+          originalContent.style.display = 'block';
+          searchResults.style.display = 'none';
+          resultsCount.textContent = '';
+        }
+      });
+      
+      // 清除搜索
+      clearSearchBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        clearSearchBtn.style.display = 'none';
+        originalContent.style.display = 'block';
+        searchResults.style.display = 'none';
+        resultsCount.textContent = '';
+        searchInput.focus();
+      });
+    }
+    
+    function performSearch(searchTerm) {
+      const searchResults = document.getElementById('search-results');
+      const resultsCount = document.getElementById('search-results-count');
+      const originalContent = document.getElementById('original-content');
+      
+      // 搜索结果存储
+      const searchMatches = {};
+      let totalMatches = 0;
+      
+      // 遍历所有分类
+      Object.keys(categorizedReleasesData).forEach(categoryName => {
+        const releases = categorizedReleasesData[categoryName];
+        const categoryMatches = [];
+        
+        // 遍历该分类下的所有releases
+        releases.forEach(release => {
+          const releaseMatches = {
+            release: release,
+            assets: []
+          };
+          
+          // 检查分类名是否匹配
+          const categoryMatch = categoryName.toLowerCase().includes(searchTerm);
+          
+          // 检查release信息是否匹配
+          const releaseMatch = (
+            (release.name && release.name.toLowerCase().includes(searchTerm)) ||
+            (release.tag_name && release.tag_name.toLowerCase().includes(searchTerm)) ||
+            (release.body && release.body.toLowerCase().includes(searchTerm))
+          );
+          
+          // 检查assets文件名是否匹配
+          const matchingAssets = release.assets.filter(asset => 
+            asset.name.toLowerCase().includes(searchTerm)
+          );
+          
+          // 如果有匹配项，添加到结果
+          if (categoryMatch || releaseMatch || matchingAssets.length > 0) {
+            releaseMatches.assets = matchingAssets.length > 0 ? matchingAssets : release.assets;
+            categoryMatches.push(releaseMatches);
+            totalMatches += releaseMatches.assets.length;
+          }
+        });
+        
+        if (categoryMatches.length > 0) {
+          searchMatches[categoryName] = categoryMatches;
+        }
+      });
+      
+      // 生成搜索结果HTML
+      let html = '';
+      
+      if (Object.keys(searchMatches).length > 0) {
+        // 有搜索结果
+        Object.keys(searchMatches).forEach(categoryName => {
+          const releases = searchMatches[categoryName];
+          
+          // 添加分类标题
+          html += `<div class="search-result-category">${escapeHtml(categoryName)}</div>`;
+          
+          // 添加匹配的releases
+           releases.forEach(({ release, assets }) => {
+             html += `
+               <div class="release">
+                 <div class="release-header">
+                   <h3><i class="fas fa-tag"></i> ${highlightText(escapeHtml(release.name), searchTerm)}</h3>
+                   <div class="release-meta">
+                     <span><i class="fas fa-tags"></i> 分类：${highlightText(escapeHtml(release.tag_name), searchTerm)}</span>
+                     <span><i class="fas fa-calendar-alt"></i> 发布时间：${new Date(release.published_at).toLocaleDateString()}</span>
+                   </div>
+                 </div>
+                 <ul class="assets" style="display:none;">
+                   ${assets.map(asset => `
+                     <li class="download-item">
+                       <div class="file-info">
+                         <span class="file-name"><i class="fas fa-file"></i> ${highlightText(escapeHtml(asset.name), searchTerm)}</span>
+                         <span class="file-size"><i class="fas fa-database"></i> ${formatFileSize(asset.size)}</span>
+                       </div>
+                       <div class="download-options">
+                         <a href="${asset.browser_download_url}" class="download-link">
+                           <i class="fas fa-download"></i> 普通下载
+                         </a>
+                         <a href="${generateProxyUrl(asset.browser_download_url)}" 
+                            class="download-link accelerated">
+                           <i class="fas fa-bolt"></i> 高速下载
+                         </a>
+                       </div>
+                     </li>
+                   `).join('')}
+                 </ul>
+                 <button class="submit-button toggle-assets search-toggle-assets">
+                   <i class="fas fa-layer-group"></i> 显示资源 (${assets.length})
+                 </button>
+               </div>
+             `;
+           });
+        });
+      } else {
+        // 无搜索结果
+        html = `
+          <div class="no-results">
+            <i class="fas fa-search"></i>
+            <p>没有找到与 "${escapeHtml(searchTerm)}" 相关的文件</p>
+            <p style="font-size:14px; margin-top:5px;">请尝试使用其他关键词搜索</p>
+          </div>
+        `;
+      }
+      
+      // 更新显示
+        searchResults.innerHTML = html;
+        resultsCount.textContent = totalMatches > 0 ? `找到 ${totalMatches} 个匹配项` : '';
+        originalContent.style.display = 'none';
+        searchResults.style.display = 'block';
+        
+        // 为搜索结果中的切换按钮添加事件监听
+        document.querySelectorAll('.search-toggle-assets').forEach(button => {
+          button.addEventListener('click', function() {
+            const assetsList = this.previousElementSibling;
+            assetsList.style.display = assetsList.style.display === 'none' ? 'block' : 'none';
+            const assetCount = this.textContent.match(/\d+/)[0];
+            this.innerHTML = assetsList.style.display === 'none' ? 
+              `<i class="fas fa-layer-group"></i> 显示资源 (${assetCount})` : 
+              `<i class="fas fa-layer-group"></i> 隐藏资源 (${assetCount})`;
+          });
+        });
+    }
+    
+    // 高亮搜索文本
+    function highlightText(text, searchTerm) {
+      if (!searchTerm) return text;
+      
+      const regex = new RegExp(`(${escapeRegExp(searchTerm)})`, 'gi');
+      return text.replace(regex, '<span class="highlight">$1</span>');
+    }
+    
+    // 转义正则表达式特殊字符
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     function formatFileSize(bytes) {
