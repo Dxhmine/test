@@ -9,10 +9,267 @@
   <link rel="stylesheet" href="https://fastlist-css.pages.dev/css.css">
   <style>
     /* css */
+    /* 固定顶部栏样式 */
+    .fixed-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--surface);
+      box-shadow: var(--elevation-2);
+      padding: var(--spacing-md) var(--spacing-lg);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+      box-sizing: border-box;
+    }
+    
+    /* 容器样式 - 移除margin-top避免与body的padding-top冲突 */
+    .container {
+      padding-top: var(--spacing-lg); /* 只保留内边距，提升视觉效果 */
+    }
+    
+    /* 公告按钮样式 */
+    .announcement-btn {
+      margin-left: var(--spacing-md);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background-color: var(--primary);
+      color: var(--on-primary);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      transition: var(--transition);
+    }
+    
+    /* 主题按钮样式 */
+    .theme-btn {
+      margin-left: var(--spacing-md);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background-color: var(--secondary);
+      color: var(--on-secondary);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .theme-btn:hover {
+      background-color: var(--secondary-container);
+      color: var(--on-secondary-container);
+    }
+    
+    /* 主题展示弹窗样式 */
+    .theme-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--elevation-3);
+      padding: var(--spacing-lg);
+      z-index: 1001;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+    
+    .theme-modal.show {
+      display: flex;
+    }
+    
+    .theme-image {
+      max-width: 100%;
+      max-height: 70vh;
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .theme-caption {
+      font-size: 1.1rem;
+      color: var(--on-surface);
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    .theme-close {
+      position: absolute;
+      top: var(--spacing-md);
+      right: var(--spacing-md);
+      background: none;
+      border: none;
+      color: var(--outline);
+      cursor: pointer;
+      padding: var(--spacing-xs);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    
+    .theme-close:hover {
+      background-color: var(--outline-variant);
+      color: var(--on-surface);
+    }
+    
+    .announcement-btn:hover {
+      background-color: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    
+    /* 公告模态窗口样式 */
+    .announcement-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--elevation-3);
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow: hidden;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+    }
+    
+    .announcement-modal.show {
+      display: flex;
+    }
+    
+    .announcement-modal-header {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-bottom: 1px solid var(--outline-variant);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .announcement-modal-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    
+    .announcement-modal-close {
+      background: none;
+      border: none;
+      color: var(--outline);
+      cursor: pointer;
+      padding: var(--spacing-xs);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    
+    .announcement-modal-close:hover {
+      background-color: var(--outline-variant);
+      color: var(--on-surface);
+    }
+    
+    .announcement-modal-body {
+      padding: var(--spacing-md) var(--spacing-lg);
+      overflow-y: auto;
+      flex: 1;
+    }
+    
+    .announcement-modal-footer {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-top: 1px solid var(--outline-variant);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--spacing-sm);
+    }
+    
+    /* 模态窗口背景遮罩 */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+    
+    .modal-backdrop.show {
+      display: block;
+    }
+    
+
+    
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    
+    .header-theme-switcher {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--radius-md);
+      background-color: var(--surface-variant);
+    }
+    
+    .theme-text {
+      font-size: 0.95rem;
+      color: var(--on-surface);
+      white-space: nowrap;
+      font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+      .header-right {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: stretch;
+      }
+      
+      .search-container {
+        width: 100%;
+      }
+      
+      .header-theme-switcher {
+        gap: var(--spacing-sm);
+        justify-content: center;
+      }
+      
+      .theme-text {
+        font-size: 0.9rem;
+      }
+    }
+    
     /* 搜索功能样式 */
     .search-container {
       position: relative;
-      margin-bottom: var(--spacing-md);
+      width: 600px;
     }
     
     .search-input-wrapper {
@@ -74,6 +331,28 @@
       color: var(--outline);
       margin-top: var(--spacing-xs);
       text-align: right;
+    }
+    
+    /* 为了防止内容被固定头部和次级栏遮挡，添加足够大的padding-top */
+    body {
+      padding-top: 1500px; /* 增加到足够大的值，确保统计控件完全可见 */
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding-top: 1700px; /* 移动端设置更大的padding-top */
+      }
+    }
+    
+    /* 公告栏容器样式 - 隐藏原有公告栏 */
+    .announcement-container {
+      max-width: var(--container-width, 1200px);
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      position: relative;
+      z-index: 100;
+      display: none; /* 隐藏原有公告栏，使用顶部按钮显示 */
     }
     
     /* 搜索结果中匹配的文本高亮 */
@@ -870,33 +1149,56 @@
   </style>
 </head>
 <body>
-  <div class="theme-switcher">
+  <div class="fixed-header">
+    <div class="header-title">资源中心<button id="announcement-button" class="announcement-btn" onclick="toggleAnnouncement()"><i class="fas fa-bullhorn"></i> 公告</button></div>
+    <div class="header-right">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="search-input"
+                 placeholder="搜索文件名或分类..."
+                 class="search-input">
+          <button id="clear-search" class="clear-search-btn" style="display:none;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="search-results-count" class="search-results-count"></div>
+      </div>
+      <button id="theme-button" class="theme-btn" onclick="showRandomTheme()">click it!</button>
+      <div class="header-theme-switcher">
+        <span class="theme-text">深色模式</span>
+        <div class="theme-toggle" onclick="toggleTheme()">
+          <span class="theme-icon light-icon"><i class="fas fa-sun"></i></span>
+          <span class="theme-icon dark-icon"><i class="fas fa-moon"></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <!-- 保留原主题切换器但默认隐藏，以防JavaScript失败时仍有后备方案 -->
+  <div class="theme-switcher" style="display:none;">
     <div class="theme-toggle" onclick="toggleTheme()">
       <span class="theme-icon light-icon"><i class="fas fa-sun"></i></span>
       <span class="theme-icon dark-icon"><i class="fas fa-moon"></i></span>
     </div>
   </div>
-
-  <header>
-    <div class="logo">
-      <div class="logo-icon">
-        <i class="fas fa-cloud"></i>
-      </div>
-      <h1>Dxhmine's downloader</h1>
-    </div>
-    <div class="github-stats">
-      <div class="github-stat">
-        <i class="fab fa-github"></i>
-        <span id="github-stars">加载中...</span> stars
-      </div>
-      <div class="github-stat">
-        <i class="fas fa-code-branch"></i>
-        <span id="github-forks">加载中...</span> forks
-      </div>
-    </div>
-  </header>
   
-  <div class="container">
+  <!-- 主题展示弹窗 -->
+  <div class="theme-modal" id="theme-modal">
+    <button class="theme-close" onclick="hideThemeModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    <img class="theme-image" id="theme-image" src="" alt="随机主题图片">
+    <p class="theme-caption" id="theme-caption">今日伴侣：</p>
+  </div>
+  <div class="modal-backdrop" id="theme-backdrop"></div>
+
+  <!-- header区域已移除，内容已整合到顶部栏下方的子栏中 -->
+  
+  <!-- 公告栏移到container外部，确保它位于顶部栏和子栏下方且不会被遮挡 -->
+  <div class="announcement-container">
     <div class="announcement-section card">
       <div class="announcement-header">
         <h2 class="announcement-title"><i class="fas fa-bullhorn"></i> 公告</h2>
@@ -908,6 +1210,9 @@
         <div class="loading-text"><i class="fas fa-spinner"></i> 加载公告中...</div>
       </div>
     </div>
+  </div>
+  
+  <div class="container">
 
     <div class="stats-bar card">
       <div class="stat-item">
@@ -926,19 +1231,7 @@
 
     <div class="card">
       <h2 class="section-title"><i class="fas fa-box-open"></i> 文件发布</h2>
-      <!-- 搜索框 -->
-      <div class="search-container">
-        <div class="search-input-wrapper">
-          <i class="fas fa-search search-icon"></i>
-          <input type="text" id="search-input" 
-                 placeholder="搜索文件名或分类..." 
-                 class="search-input">
-          <button id="clear-search" class="clear-search-btn" style="display:none;">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div id="search-results-count" class="search-results-count"></div>
-      </div>
+      <!-- 搜索结果区域 -->
       <!-- 原始内容显示区域 -->
       <div id="original-content">
         <div class="release-grid" id="releases">
@@ -1000,6 +1293,8 @@
                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.body.setAttribute('data-theme', savedTheme);
     }
+    
+
 
     // 获取GitHub仓库信息
     async function fetchGitHubStats() {
@@ -1023,16 +1318,456 @@
       initTheme();
       try {
         await Promise.all([
-          fetchAnnouncement(),
           fetchReleases(),
           fetchDiscussions(),
           fetchGitHubStats()
         ]);
+        // 不再自动加载原公告栏内容，因为它将被隐藏
       } catch (error) {
         showErrorNotification(`初始化失败: ${error.message}`);
       }
     }
 
+    // 获取GitHub仓库themes文件夹中的图片列表
+    async function getThemeImages() {
+      try {
+        console.log('开始检测GitHub仓库themes文件夹中的图片');
+        
+        // 添加操作超时控制
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('获取图片列表超时')), 8000);
+        });
+        
+        // 使用Promise.race实现超时控制
+        return await Promise.race([
+          (async () => {
+            // 尝试通过GitHub API获取仓库内容
+            const repoUrl = 'https://api.github.com/repos/Dxhmine/test/contents/themes';
+            const response = await fetch(repoUrl, {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/vnd.github.v3+json'
+              }
+            });
+            
+            // 检查响应状态
+            if (!response || !response.ok) {
+              const errorMsg = response ? `GitHub API返回状态码: ${response.status}` : '无法连接到GitHub API';
+              console.log(errorMsg + '，尝试备用方法检测图片');
+              return await detectImagesByCommonPatterns();
+            }
+            
+            // 尝试解析JSON
+            let items;
+            try {
+              items = await response.json();
+            } catch (jsonError) {
+              console.error('解析GitHub API响应失败:', jsonError);
+              console.log('尝试备用方法检测图片');
+              return await detectImagesByCommonPatterns();
+            }
+            
+            // 检查解析结果
+            if (!Array.isArray(items)) {
+              console.error('GitHub API返回的不是数组格式:', items);
+              console.log('尝试备用方法检测图片');
+              return await detectImagesByCommonPatterns();
+            }
+            
+            // 过滤出图片文件
+            const imageFiles = items
+              .filter(item => item && item.type === 'file' && 
+                /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(item.name))
+              .map(item => item.name);
+            
+            console.log('通过GitHub API检测到的图片:', imageFiles);
+            return imageFiles.length > 0 ? imageFiles : ['image1.png'];
+          })(),
+          timeoutPromise
+        ]);
+      } catch (error) {
+        console.error('获取主题图片列表失败:', error);
+        // 出错时尝试备用方法
+        try {
+          return await detectImagesByCommonPatterns();
+        } catch (backupError) {
+          console.error('备用方法也失败:', backupError);
+          return ['image1.png']; // 所有方法都失败时返回默认图片
+        }
+      }
+    }
+    
+    // 备用方法：通过常见命名模式检测图片
+    async function detectImagesByCommonPatterns() {
+      try {
+        // 定义常见的图片命名模式
+        const commonPatterns = [
+          // 常见的基础命名
+          'theme', 'background', 'wallpaper', 'banner', 'cover', 'header',
+          // 数字序列
+          '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+          // 之前使用过的命名
+          'image1'
+        ];
+        
+        // 常见的图片扩展名
+        const extensions = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+        
+        // 生成可能的文件名组合
+        const possibleImages = [];
+        for (const pattern of commonPatterns) {
+          for (const ext of extensions) {
+            possibleImages.push(`${pattern}.${ext}`);
+          }
+        }
+        
+        console.log('准备检测的可能图片文件数量:', possibleImages.length);
+        
+        // 添加超时控制
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('图片检测超时')), 10000);
+        });
+        
+        // 使用Promise.race实现超时控制
+        return await Promise.race([
+          (async () => {
+            // 使用HEAD请求并行检查每个图片是否存在，但限制并发数
+            const concurrencyLimit = 5;
+            const validImages = [];
+            
+            // 分批执行请求
+            for (let i = 0; i < possibleImages.length; i += concurrencyLimit) {
+              const batch = possibleImages.slice(i, i + concurrencyLimit);
+              const checkPromises = batch.map(async (filename) => {
+                try {
+                  // 验证filename是有效的字符串
+                  if (typeof filename !== 'string' || !filename.trim()) {
+                    return null;
+                  }
+                  
+                  const imageUrl = `https://raw.githubusercontent.com/Dxhmine/test/main/themes/${encodeURIComponent(filename.trim())}`;
+                  const controller = new AbortController();
+                  const timeoutId = setTimeout(() => controller.abort(), 3000); // 单个请求3秒超时
+                  
+                  const response = await fetch(imageUrl, { 
+                    method: 'HEAD',
+                    signal: controller.signal,
+                    headers: {
+                      'Accept': 'image/*'
+                    }
+                  });
+                  
+                  clearTimeout(timeoutId);
+                  return response.ok ? filename : null;
+                } catch (error) {
+                  // 忽略单个请求错误
+                  return null;
+                }
+              });
+              
+              const batchResults = await Promise.all(checkPromises);
+              validImages.push(...batchResults.filter(filename => filename !== null));
+            }
+            
+            console.log('通过备用方法检测到的图片:', validImages);
+            return validImages.length > 0 ? validImages : ['image1.png'];
+          })(),
+          timeoutPromise
+        ]);
+      } catch (error) {
+        console.error('备用图片检测方法失败:', error);
+        return ['image1.png'];
+      }
+    }
+    
+    // 每日刷新图片功能
+    function shouldRefreshImage() {
+      try {
+        const storedData = localStorage.getItem('themeImageData');
+        if (!storedData) return true; // 没有存储数据，需要刷新
+        
+        const { lastDate, imageName } = JSON.parse(storedData);
+        const today = new Date().toDateString();
+        
+        // 检查日期是否变更
+        if (lastDate !== today) {
+          console.log('日期变更，需要刷新图片');
+          return true;
+        }
+        
+        console.log('今日已显示过图片，使用缓存的图片:', imageName);
+        return false;
+      } catch (error) {
+        console.error('检查图片刷新状态失败:', error);
+        return true; // 出错时默认刷新
+      }
+    }
+    
+    // 获取今日缓存的图片信息
+    function getCachedImageInfo() {
+      try {
+        const storedData = localStorage.getItem('themeImageData');
+        if (!storedData) return null;
+        
+        const { lastDate, imageName, imageUrl } = JSON.parse(storedData);
+        const today = new Date().toDateString();
+        
+        // 只返回今天的缓存信息
+        return lastDate === today ? { imageName, imageUrl } : null;
+      } catch (error) {
+        console.error('获取缓存图片信息失败:', error);
+        return null;
+      }
+    }
+    
+    // 缓存今日图片信息
+    function cacheImageInfo(imageName, imageUrl) {
+      try {
+        const today = new Date().toDateString();
+        const data = {
+          lastDate: today,
+          imageName: imageName,
+          imageUrl: imageUrl
+        };
+        localStorage.setItem('themeImageData', JSON.stringify(data));
+        console.log('图片信息已缓存');
+      } catch (error) {
+        console.error('缓存图片信息失败:', error);
+      }
+    }
+    
+    // 显示随机主题图片
+    async function showRandomTheme() {
+      // 验证DOM元素是否存在
+      const modal = document.getElementById('theme-modal');
+      const backdrop = document.getElementById('theme-backdrop');
+      const imgElement = document.getElementById('theme-image');
+      const captionElement = document.getElementById('theme-caption');
+      
+      // 安全检查：确保所有必要的DOM元素都存在
+      if (!modal || !backdrop || !imgElement || !captionElement) {
+        console.error('主题弹窗的必要DOM元素不存在');
+        alert('主题功能初始化失败，请刷新页面重试');
+        return;
+      }
+      
+      // 显示弹窗和背景
+      modal.classList.add('show');
+      backdrop.classList.add('show');
+      
+      // 显示初始加载状态
+      captionElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在准备主题图片...';
+      imgElement.src = ''; // 清空图片源
+      imgElement.alt = '主题图片加载中...'; // 更新alt属性
+      
+      // 检查是否可以使用缓存的图片
+      const cachedImage = getCachedImageInfo();
+      if (cachedImage && !shouldRefreshImage()) {
+        console.log('使用今日缓存的图片:', cachedImage.imageName);
+        captionElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载今日图片...';
+        
+        // 创建Promise来处理图片加载，添加超时
+        const imageLoadPromise = new Promise((resolve, reject) => {
+          imgElement.onerror = function() {
+            reject(new Error(`缓存图片加载失败`));
+          };
+          
+          imgElement.onload = function() {
+            resolve();
+          };
+          
+          // 更新图片源和alt属性
+          imgElement.alt = `今日主题图片: ${cachedImage.imageName}`;
+          imgElement.src = cachedImage.imageUrl;
+        });
+        
+        try {
+          await imageLoadPromise;
+          captionElement.textContent = `今日伴侣：${cachedImage.imageName} (今日已缓存)`;
+          console.log('缓存图片加载成功');
+          
+          // 确保弹窗在最上层
+          if (modal.style.zIndex === '' || parseInt(modal.style.zIndex) < 1000) {
+            modal.style.zIndex = '1000';
+            backdrop.style.zIndex = '999';
+          }
+          
+          return; // 直接返回，不执行后续逻辑
+        } catch (error) {
+          console.error('缓存图片加载失败，重新获取:', error);
+          // 继续执行后续逻辑获取新图片
+        }
+      }
+      
+      try {
+        // 添加整体操作超时
+        let overallTimeoutId;
+        const timeoutPromise = new Promise((_, reject) => {
+          overallTimeoutId = setTimeout(() => reject(new Error('操作超时')), 60000); // 延长到1分钟超时
+        });
+        
+        // 使用Promise.race实现超时控制
+        await Promise.race([
+          (async () => {
+            // 获取实际存在的图片列表
+            captionElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在检测可用图片...';
+            let themeImages;
+            
+            try {
+              themeImages = await getThemeImages();
+              
+              // 安全检查：确保返回的是数组
+              if (!Array.isArray(themeImages)) {
+                throw new Error('图片列表格式错误');
+              }
+              
+              console.log('可用图片列表:', themeImages);
+              
+              // 如果图片列表为空，抛出错误
+              if (themeImages.length === 0) {
+                throw new Error('未检测到任何可用图片');
+              }
+            } catch (fetchError) {
+              console.error('获取图片列表失败:', fetchError);
+              throw new Error(`获取图片列表失败: ${fetchError.message}`);
+            }
+            
+            // 图片选择逻辑
+            let selectedImage;
+            
+            // 过滤出有效的文件名
+            const validImages = themeImages.filter(img => typeof img === 'string' && img.trim());
+            
+            if (validImages.length === 0) {
+              throw new Error('未找到有效图片文件名');
+            }
+            
+            // 根据图片数量选择图片
+            if (validImages.length > 1) {
+              const randomIndex = Math.floor(Math.random() * validImages.length);
+              selectedImage = validImages[randomIndex];
+              console.log(`随机选择了图片: ${selectedImage} (索引: ${randomIndex})`);
+            } else {
+              // 如果只有一张图片，直接使用
+              selectedImage = validImages[0];
+              console.log(`只有一张可用图片: ${selectedImage}`);
+            }
+            
+            // 安全检查：确保selectedImage是有效的
+            if (typeof selectedImage !== 'string' || !selectedImage.trim()) {
+              throw new Error('选择的图片文件名无效');
+            }
+            
+            // 显示加载状态
+            captionElement.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 正在加载图片 (共${validImages.length}张)...`;
+            
+            // 构建图片URL（使用encodeURIComponent确保特殊字符正确处理）
+            const imageUrl = `https://raw.githubusercontent.com/Dxhmine/test/main/themes/${encodeURIComponent(selectedImage.trim())}`;
+            console.log('正在加载图片:', imageUrl);
+            
+            // 创建Promise来处理图片加载，添加超时
+            const imageLoadPromise = new Promise((resolve, reject) => {
+              // 清理之前的事件监听器
+              imgElement.onerror = null;
+              imgElement.onload = null;
+              
+              // 检测到图片开始加载，清除整体操作超时定时器
+              if (overallTimeoutId) {
+                clearTimeout(overallTimeoutId);
+                console.log('检测到图片开始加载，已停止整体操作超时判定');
+              }
+              
+              const imageLoadTimeout = setTimeout(() => {
+                reject(new Error('图片加载超时'));
+              }, 60000); // 延长到1分钟图片加载超时
+              
+              // 设置图片加载错误处理
+              imgElement.onerror = function() {
+                clearTimeout(imageLoadTimeout);
+                reject(new Error(`图片"${selectedImage}"加载失败`));
+              };
+              
+              // 设置图片加载成功处理
+              imgElement.onload = function() {
+                clearTimeout(imageLoadTimeout);
+                resolve();
+              };
+              
+              // 更新图片源和alt属性
+              imgElement.alt = `主题图片: ${selectedImage}`;
+              imgElement.src = imageUrl;
+            });
+            
+            // 等待图片加载
+            await imageLoadPromise;
+            
+            // 图片加载成功，更新标题
+            if (validImages.length > 1) {
+              captionElement.textContent = `今日伴侣：${selectedImage} (随机选择自 ${validImages.length} 张图片)`;
+            } else {
+              captionElement.textContent = `今日伴侣：${selectedImage} (唯一可用图片)`;
+            }
+            
+            // 缓存今日图片信息
+            cacheImageInfo(selectedImage, imageUrl);
+            
+            console.log('图片加载成功:', selectedImage);
+          })(),
+          timeoutPromise
+        ]);
+      } catch (error) {
+        console.error('主题图片加载过程中出错:', error);
+        
+        // 显示占位图
+        imgElement.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI0ZGRiIgc3Ryb2tlPSIjQjBCMEIwIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI1MCIgeT0iNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzQ0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+6IO95LqM6YeN55+lPC90ZXh0Pjwvc3ZnPg==';
+        imgElement.alt = '图片加载失败';
+        
+        // 错误分类和用户友好提示
+        let errorMessage = '图片加载失败';
+        let errorDetails = error.message || String(error);
+        
+        // 根据错误类型显示不同的错误信息
+        if (errorDetails.includes('超时')) {
+          errorMessage = '加载超时，请检查网络连接';
+          errorDetails += '。可能是网络不稳定或GitHub服务器响应缓慢。';
+        } else if (errorDetails.includes('未找到') || errorDetails.includes('404')) {
+          errorMessage = '未找到可显示的图片';
+          errorDetails += '。仓库中可能没有可用的主题图片。';
+        } else if (errorDetails.includes('获取图片列表')) {
+          errorMessage = '无法获取图片列表';
+          errorDetails += '。可能是GitHub API限制或网络问题。';
+        } else if (errorDetails.includes('图片列表格式')) {
+          errorMessage = '图片列表数据异常';
+          errorDetails += '。请刷新页面重试。';
+        }
+        
+        // 显示错误信息和重试按钮
+        captionElement.innerHTML = `
+          <div style="color:var(--error); margin-bottom:8px;">${errorMessage}</div>
+          <button onclick="showRandomTheme()" class="refresh-button" style="margin-top:10px; padding:6px 12px; background:#f0f0f0; border:1px solid #ddd; border-radius:4px; cursor:pointer;">
+            <i class="fas fa-redo"></i> 重试
+          </button>
+          <div style="font-size:12px; color:#666; margin-top:8px; line-height:1.4;">错误详情: ${errorDetails}</div>
+          <div style="font-size:11px; color:#888; margin-top:5px;">点击上方按钮尝试重新加载</div>
+        `;
+      }
+      
+      // 确保弹窗在最上层
+      if (modal.style.zIndex === '' || parseInt(modal.style.zIndex) < 1000) {
+        modal.style.zIndex = '1000';
+        backdrop.style.zIndex = '999';
+      }
+    }
+    
+    // 隐藏主题弹窗
+    function hideThemeModal() {
+      document.getElementById('theme-modal').classList.remove('show');
+      document.getElementById('theme-backdrop').classList.remove('show');
+    }
+    
+    // 点击背景关闭弹窗
+    document.getElementById('theme-backdrop').addEventListener('click', hideThemeModal);
+    
     // 公告
     async function fetchAnnouncement() {
       const contentDiv = document.getElementById('announcement-content');
@@ -1053,6 +1788,62 @@
         `;
       }
     }
+    
+    // 模态窗口公告获取
+    async function fetchModalAnnouncement() {
+      const contentDiv = document.getElementById('modal-announcement-content');
+      try {
+        contentDiv.innerHTML = '<div class="loading-text"><i class="fas fa-spinner"></i> 加载中...</div>';
+        const response = await fetch('https://raw.githubusercontent.com/Dxhmine/test/main/home.txt');
+        if (!response.ok) throw new Error(`HTTP错误! 状态码: ${response.status}`);
+        const text = await response.text();
+        contentDiv.innerHTML = (text || '暂无公告').replace(/\n/g, '<br>');
+      } catch (error) {
+        contentDiv.innerHTML = `
+          <div class="error-text">
+            <i class="fas fa-exclamation-triangle"></i> ${escapeHtml(error.message)}
+            <button onclick="fetchModalAnnouncement()" class="refresh-button" style="margin-top:10px;">
+              <i class="fas fa-redo"></i> 重试
+            </button>
+          </div>
+        `;
+      }
+    }
+    
+    // 切换公告模态窗口显示/隐藏
+    function toggleAnnouncement() {
+      const modal = document.getElementById('announcement-modal');
+      const backdrop = document.getElementById('announcement-backdrop');
+      
+      // 切换显示状态
+      modal.classList.toggle('show');
+      backdrop.classList.toggle('show');
+      
+      // 如果是打开状态，加载公告内容
+      if (modal.classList.contains('show')) {
+        fetchModalAnnouncement();
+      }
+    }
+    
+    // 点击空白区域（背景遮罩）关闭公告
+    document.addEventListener('DOMContentLoaded', function() {
+      const backdrop = document.getElementById('announcement-backdrop');
+      const modal = document.getElementById('announcement-modal');
+      
+      // 点击背景遮罩关闭公告
+      backdrop.addEventListener('click', function(e) {
+        if (e.target === backdrop) {
+          toggleAnnouncement();
+        }
+      });
+      
+      // 点击ESC键关闭公告
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+          toggleAnnouncement();
+        }
+      });
+    });
 
     // 完整文件发布功能
     async function fetchReleases() {
@@ -1623,5 +2414,19 @@
     // 初始化
     document.addEventListener('DOMContentLoaded', initialize);
   </script>
-</body>
+<!-- 公告模态窗口 -->
+  <div class="modal-backdrop" id="announcement-backdrop"></div>
+  <div class="announcement-modal" id="announcement-modal">
+    <div class="announcement-modal-header">
+      <div class="announcement-modal-title"><i class="fas fa-bullhorn"></i> 公告</div>
+      <button class="announcement-modal-close" onclick="toggleAnnouncement()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="announcement-modal-body" id="modal-announcement-content">
+      <div class="loading-text"><i class="fas fa-spinner"></i> 加载公告中...</div>
+    </div>
+    <div class="announcement-modal-footer">
+      <button class="refresh-button" onclick="fetchModalAnnouncement()"><i class="fas fa-sync-alt"></i> 刷新</button>
+    </div>
+  </div>
+  </body>
 </html>
